@@ -1,0 +1,17 @@
+{
+  "name": "rest_shop",
+  "version": "1.0.0",
+  "description": "RESTful API for a shop built in node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "Ons Ali",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
