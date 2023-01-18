@@ -8,7 +8,7 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-    res.status(200).json({
+    res.status(201).json({
         message: 'Handler for POST reqests to /products' 
     });
 });
@@ -27,13 +27,13 @@ router.get('/:productId', (req, res, next) => { //colon is var in express
     }
 }); 
 
-router.patch('/:productId', (req, res, next) => { //colon is var in express
+router.patch('/:productId', (req, res, next) => {
     res.status(200).json({
         message: 'Updated the product'
     });
 }); 
 
-router.delete('/:productId', (req, res, next) => { //colon is var in express
+router.delete('/:productId', (req, res, next) => {
     res.status(200).json({
         message: 'Deleted the product'
     });
