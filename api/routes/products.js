@@ -8,8 +8,13 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
+    const product = {
+        name: req.body.name,
+        price: req.body.price
+    }; //get name and price from request params and store in prodcut
     res.status(201).json({
-        message: 'Handler for POST reqests to /products' 
+        message: 'Handler for POST reqests to /products', 
+        createdProduct: product
     });
 });
 

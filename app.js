@@ -1,11 +1,33 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan'); //middleware for logging functionality in terminal using (next) param
+const bodyParser = require('body-parser'); //package for parsing body content of requests
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 
+//everything after app.use is middleware
+
 app.use(morgan('dev'));
+//parse url, and json encoded data
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+
+//set CORS header allowing all origins. RESTful API's usually are lax with CORS to allow wider implementation of API
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    //preflight request
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+        return res.status(200).json({});
+    }
+    next(); //go to routes
+});
+
 
 //Routes to handle requests
 app.use('/products', productRoutes); 
