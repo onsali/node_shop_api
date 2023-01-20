@@ -2,9 +2,16 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan'); //middleware for logging functionality in terminal using (next) param
 const bodyParser = require('body-parser'); //package for parsing body content of requests
+const mongoose = require('mongoose'); //package for working with mongodb
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
+
+mongoose.connect('mongodb+srv://admin:toor@cluster0.1hgonkn.mongodb.net/?retryWrites=true&w=majority',
+{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}); //hardcoded mongodb connection
 
 //everything after app.use is middleware
 
