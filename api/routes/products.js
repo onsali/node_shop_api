@@ -6,10 +6,24 @@ const Product = require('../models/products'); //import product model
 
 router.get('/', (req, res, next) => {
     Product.find()
+        .select("name price _id") //excluding _v can also do "-_v" when selecting
         .exec()
-        .then(docs => {
-            console.log(docs);
-            res.status(200).json(docs);
+        .then(docs => { //in mongoose, docs are an instance of a model
+            const response = {
+                count: docs.length,
+                products: docs.map(doc => { //restructuring response to add link to product
+                    return {
+                        name: doc.name,
+                        price: doc.price,
+                        _id: doc._id,
+                        request: {
+                            type: 'GET',
+                            url: 'http://localhost:3000/products/' + doc._id
+                        }
+                    }
+                })
+            };
+            res.status(200).json(response);
         })  //exec returns true promise
         .catch (err => {
             console.log(err);  //error for server side
@@ -25,15 +39,23 @@ router.post('/', (req, res, next) => {
         _id: new mongoose.Types.ObjectId(), 
         name: req.body.name, //get data from request body where key is name
         price: req.body.price
-    }); //construct product in mongodb
+    }); //construct product 
     product
     .save().
     then(result => {
           console.log(result);
           res.status(201).json({
-            message: 'Handler for POST reqests to /products', 
-            createdProduct: result
-        });
+            message: 'Created product', 
+            createdProduct: {
+                name: result.name,
+                price: result.price,
+                _id: result.id,
+                request: {
+                    type: 'GET', 
+                    url: 'http://localhost:3000/products/' + result._id
+                }
+            }
+          });
         }) //mongoose method to save in db
         .catch(err => {
             console.log(err);
@@ -47,6 +69,7 @@ router.post('/', (req, res, next) => {
 router.get('/:productId', (req, res, next) => { //colon is var in express
     const id = req.params.productId; //param
     Product.findById(id)
+        .select("-__v")
         .exec()
         .then(doc => {
             console.log(doc);
@@ -75,8 +98,8 @@ router.patch('/:productId', (req, res, next) => {
                 error: err
             })
         } else {
-            console.log("Result: " + result);
-            res.status(200).json(result);
+            console.log("Product updated: " + result);
+            res.status(200).json({message: "Product updated", result});
         }
     });
 }); 
@@ -86,7 +109,7 @@ router.delete('/:productId', (req, res, next) => {
     Product.remove({_id: id})
         .exec()
         .then(result => {
-            res.status(200).json(result);
+            res.status(200).json({message: "Product deleted",result});
         })
         .catch (err => {
             console.log(err);
@@ -95,6 +118,5 @@ router.delete('/:productId', (req, res, next) => {
             })
         });
 }); 
-
 
 module.exports = router; //allows router to be used globally in other files
