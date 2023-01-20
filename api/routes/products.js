@@ -35,8 +35,8 @@ router.get('/', (req, res, next) => {
 //arguments from request goes to function which executes a method then parse docs into console and catch; return error along with response codes
 
 router.post('/', (req, res, next) => {
-    const product = new Product({
-        _id: new mongoose.Types.ObjectId(), 
+    const product = new Product({ //creating product object and storing in db
+        _id: new mongoose.Types.ObjectId(), //executing ObjectId to automatically generate one
         name: req.body.name, //get data from request body where key is name
         price: req.body.price
     }); //construct product 
