@@ -1,12 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const multer = require('multer'); //image upload package
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function(req, file, cb) {
+        cb(null, new Date().toISOString() + file.originalname);
+    }   
+});
+
+//file filter for image upload
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'imgage/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+}
+
+const upload = multer({storage: storage, fileFilter: fileFilter,  limits: {
+    fileSize: 1024*1024*5
+}});
 
 const Product = require('../models/products'); //import product model
 
 router.get('/', (req, res, next) => {
     Product.find()
-        .select("name price _id") //excluding _v can also do "-_v" when selecting
+        .select("name price _id productImage") //excluding _v can also do "-_v" when selecting
         .exec()
         .then(docs => { //in mongoose, docs are an instance of a model
             const response = {
@@ -15,6 +38,7 @@ router.get('/', (req, res, next) => {
                     return {
                         name: doc.name,
                         price: doc.price,
+                        productImage: doc.productImage,
                         _id: doc._id,
                         request: {
                             type: 'GET',
@@ -34,15 +58,17 @@ router.get('/', (req, res, next) => {
 });
 //arguments from request goes to function which executes a method then parse docs into console and catch; return error along with response codes
 
-router.post('/', (req, res, next) => {
-    const product = new Product({ //creating product object and storing in db
+router.post('/', upload.single('productImage'),(req, res, next) => {
+    console.log(req.file);
+    const product = new Product({ 
         _id: new mongoose.Types.ObjectId(), //executing ObjectId to automatically generate one
         name: req.body.name, //get data from request body where key is name
-        price: req.body.price
-    }); //construct product 
+        price: req.body.price,
+        productImage: req.file.path
+    }); //construct product object 
     product
-    .save().
-    then(result => {
+    .save() //store in db
+    .then(result => {
           console.log(result);
           res.status(201).json({
             message: 'Created product', 

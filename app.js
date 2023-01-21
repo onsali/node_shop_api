@@ -7,7 +7,7 @@ const mongoose = require('mongoose'); //package for working with mongodb
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 
-mongoose.connect('mongodb+srv://admin:toor@cluster0.1hgonkn.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://admin:toor@cluster0.1hgonkn.mongodb.net/?retryWrites=true&w=majority', //hardcoded mongodb key :)
 {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -16,6 +16,7 @@ mongoose.connect('mongodb+srv://admin:toor@cluster0.1hgonkn.mongodb.net/?retryWr
 //everything after app.use is middleware
 
 app.use(morgan('dev'));
+app.use('/uploads', express.static('uploads')); //makes folder publicly available
 //parse url, and json encoded data
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
