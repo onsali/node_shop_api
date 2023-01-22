@@ -6,6 +6,7 @@ const mongoose = require('mongoose'); //package for working with mongodb
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
+const userRoutes = require('./api/routes/user');
 
 mongoose.connect('mongodb+srv://admin:toor@cluster0.1hgonkn.mongodb.net/?retryWrites=true&w=majority', //hardcoded mongodb key :)
 {
@@ -40,6 +41,7 @@ app.use((req, res, next) => {
 //Routes to handle requests
 app.use('/products', productRoutes); 
 app.use('/orders', orderRoutes);
+app.use('/user', userRoutes);
 
 //Error handling for requests that didn't make it to above routes
 app.use((req, res, next) => {
