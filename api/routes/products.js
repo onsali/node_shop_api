@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const multer = require('multer'); //image upload package
+const auth = require('../auth/auth');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -14,7 +15,7 @@ const storage = multer.diskStorage({
 
 //file filter for image upload
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'imgage/jpeg' || file.mimetype === 'image/png') {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
         cb(null, true);
     } else {
         cb(null, false);
@@ -58,7 +59,7 @@ router.get('/', (req, res, next) => {
 });
 //arguments from request goes to function which executes a method then parse docs into console and catch; return error along with response codes
 
-router.post('/', upload.single('productImage'),(req, res, next) => {
+router.post('/', auth, upload.single('productImage'), (req, res, next) => {
     console.log(req.file);
     const product = new Product({ 
         _id: new mongoose.Types.ObjectId(), //executing ObjectId to automatically generate one
@@ -111,7 +112,7 @@ router.get('/:productId', (req, res, next) => { //colon is var in express
         });
 }); 
 
-router.patch('/:productId', (req, res, next) => {
+router.patch('/:productId', auth, (req, res, next) => {
     const id = req.params.productId
     Product.findByIdAndUpdate(id, {
         $set: req.body
@@ -130,7 +131,7 @@ router.patch('/:productId', (req, res, next) => {
     });
 }); 
 
-router.delete('/:productId', (req, res, next) => {
+router.delete('/:productId', auth, (req, res, next) => {
     const id = req.params.productId;
     Product.remove({_id: id})
         .exec()
